@@ -11,7 +11,7 @@ class HomeScreen extends ConsumerStatefulWidget {
 }
 
 class _HomeScreenState extends ConsumerState<HomeScreen> {
-  final weatherServices = weatherApiServices();
+  final weatherServices = WeatherApiServices();
   String city = "Hermosillo";
   String coutry = "";
   List<Map<String, dynamic>> currentValue = [];
@@ -234,43 +234,130 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         height: 100,
                         width: double.maxFinite,
                         decoration: BoxDecoration(
-                          color: Theme.of(context).colorScheme.onPrimary,
+                          // Puedes cambiar el color aquí. Por ejemplo, a un azul claro.
+                          color: Theme.of(context).colorScheme.onSecondary,
                           borderRadius: BorderRadius.circular(15),
                           boxShadow: [
                             BoxShadow(
                               color: Theme.of(context).colorScheme.surface,
-                              offset: Offset(1, 1),
-                              blurRadius: 10,
+                              offset: Offset(1, 3.5),
+                              blurRadius: 9,
                               spreadRadius: 1,
                             ),
                           ],
                         ),
-                        child: Column(
-                          children: [
-                            //Para humedad
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              children: [
-                                Icon(Icons.water_sharp, size: 30,),
-                                 Text(
-                                  "${currentValue[0]['humidity']}%",
-                                  style: TextStyle(
-                                    color: Theme.of(context).colorScheme.surface,
-                                    fontFamily: "JetBrainsMono",
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: [
+                              Column(
+                                children: [
+                                  Column(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceAround,
+                                    children: [
+                                      Icon(
+                                        Icons.water_drop_sharp,
+                                        size: 30,
+                                        color: Theme.of(
+                                          context,
+                                        ).colorScheme.surface,
+                                      ),
+                                      Text(
+                                        "${currentValue[0]['humidity']}%",
+                                        style: TextStyle(
+                                          color: Theme.of(
+                                            context,
+                                          ).colorScheme.surface,
+                                          fontFamily: "JetBrainsMono",
+                                        ),
+                                      ),
+                                      Text(
+                                        "Humedad",
+                                        style: TextStyle(
+                                          color: Theme.of(
+                                            context,
+                                          ).colorScheme.surface,
+                                          fontFamily: "JetBrainsMono",
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                ),
-                                Text(
-                                  "Humedad",
-                                  style: TextStyle(
-                                    color: Theme.of(context).colorScheme.surface,
-                                    fontFamily: "JetBrainsMono",
+                                ],
+                              ),
+                              Column(
+                                children: [
+                                  Column(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceAround,
+                                    children: [
+                                      Icon(
+                                        Icons.wind_power,
+                                        size: 30,
+                                        color: Theme.of(
+                                          context,
+                                        ).colorScheme.surface,
+                                      ),
+                                      Text(
+                                        "${currentValue[0]['wind_kph']}k/h",
+                                        style: TextStyle(
+                                          color: Theme.of(
+                                            context,
+                                          ).colorScheme.surface,
+                                          fontFamily: "JetBrainsMono",
+                                        ),
+                                      ),
+                                      Text(
+                                        "Viento",
+                                        style: TextStyle(
+                                          color: Theme.of(
+                                            context,
+                                          ).colorScheme.surface,
+                                          fontFamily: "JetBrainsMono",
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                ),
-                              ],
-                            ),
-                          ],
+                                ],
+                              ),
+                              Column(
+                                children: [
+                                  Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Icon(
+                                        Icons.sunny,
+                                        size: 30,
+                                        color: Theme.of(
+                                          context,
+                                        ).colorScheme.surface,
+                                      ),
+                                      Text(
+                                        "${currentValue[0]['humidity']}°C",
+                                        style: TextStyle(
+                                          color: Theme.of(
+                                            context,
+                                          ).colorScheme.surface,
+                                          fontFamily: "JetBrainsMono",
+                                        ),
+                                      ),
+                                      Text(
+                                        "Temp Max",
+                                        style: TextStyle(
+                                          color: Theme.of(
+                                            context,
+                                          ).colorScheme.surface,
+                                          fontFamily: "JetBrainsMono",
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
                         ),
-                        
                       ),
                     ),
                   ],

@@ -5,7 +5,7 @@ import 'package:http/http.dart' as http;
 
 const apiKey = "9d3730d96d344cc187e190815252206";
 
-class weatherApiServices {
+class WeatherApiServices {
 
   Future<Map<String, dynamic>> getHourlyForecast(String location) async {
     final url = Uri.parse(
