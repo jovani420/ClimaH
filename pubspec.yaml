@@ -1,0 +1,38 @@
+name: app_clima
+description: "A new Flutter project."
+publish_to: 'none'
+version: 0.1.0
+
+environment:
+  sdk: ^3.8.0
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.8
+  http: ^1.4.0
+  intl: ^0.20.2
+  google_fonts: ^6.2.1
+  flutter_riverpod: ^2.6.1
+  video_player: ^2.10.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/weather.gif
+    - assets/weather/Sunny.png
+  fonts:
+    - family: JetBrains
+      fonts:
+        - asset: assets/fonts/variable/JetBrainsMono[wght].ttf
+        - asset: assets/fonts/variable/JetBrainsMono-Italic[wght].ttf
+    - family: JetBrainsMono
+      fonts:
+        - asset: assets/fonts/ttf/JetBrainsMono-Bold.ttf
+        - asset: assets/fonts/ttf/JetBrainsMono-BoldItalic.ttf
+
