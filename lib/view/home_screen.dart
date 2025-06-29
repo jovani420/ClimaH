@@ -2,6 +2,7 @@ import 'package:app_clima/provider/theme_provider.dart';
 import 'package:app_clima/services/api_services.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
@@ -96,6 +97,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         );
       }
     }
+  }
+
+  String formateTime(String timeString) {
+    DateTime time = DateTime.parse(timeString);
+    return DateFormat.j().format(time);
   }
 
   @override
@@ -194,174 +200,260 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             )
           else ...[
             if (currentValue.isNotEmpty)
-              Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      "$city${coutry.isNotEmpty ? ", $coutry" : ""}",
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        fontSize: 31,
-                        color: Theme.of(context).colorScheme.onPrimary,
-                        fontWeight: FontWeight.w500,
-                        fontFamily: "JetBrains",
-                      ),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    "$city${coutry.isNotEmpty ? ", $coutry" : ""}",
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontSize: 31,
+                      color: Theme.of(context).colorScheme.onPrimary,
+                      fontWeight: FontWeight.w500,
+                      fontFamily: "JetBrains",
                     ),
-                    Text(
-                      "${currentValue[0]['temp_c']}°C",
-                      style: TextStyle(
-                        fontSize: 50,
-                        color: Theme.of(context).colorScheme.onPrimary,
-                        fontWeight: FontWeight.bold,
-                        fontFamily: "JetBrainsMono",
-                      ),
+                  ),
+                  Text(
+                    "${currentValue[0]['temp_c']}°C",
+                    style: TextStyle(
+                      fontSize: 50,
+                      color: Theme.of(context).colorScheme.onPrimary,
+                      fontWeight: FontWeight.bold,
+                      fontFamily: "JetBrainsMono",
                     ),
-                    Text(
-                      "${currentValue[0]['condition']['text']}",
-                      style: TextStyle(
-                        fontSize: 30,
-                        color: Theme.of(context).colorScheme.onPrimary,
-                        fontFamily: "JetBrains",
-                      ),
+                  ),
+                  Text(
+                    "${currentValue[0]['condition']['text']}",
+                    style: TextStyle(
+                      fontSize: 30,
+                      color: Theme.of(context).colorScheme.onPrimary,
+                      fontFamily: "JetBrains",
                     ),
-                    SizedBox(height: 15),
-                    Image.asset("assets/weather/Sunny.png", height: 200),
-                    Padding(
-                      padding: EdgeInsets.all(15),
-                      child: Container(
-                        height: 100,
-                        width: double.maxFinite,
-                        decoration: BoxDecoration(
-                          // Puedes cambiar el color aquí. Por ejemplo, a un azul claro.
-                          color: Theme.of(context).colorScheme.onSecondary,
-                          borderRadius: BorderRadius.circular(15),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Theme.of(context).colorScheme.surface,
-                              offset: Offset(1, 3.5),
-                              blurRadius: 9,
-                              spreadRadius: 1,
+                  ),
+                  SizedBox(height: 15),
+                  Image.asset("assets/weather/Sunny.png", height: 200),
+                  Padding(
+                    padding: EdgeInsets.all(15),
+                    child: Container(
+                      height: 100,
+                      width: double.maxFinite,
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).primaryColor,
+                        borderRadius: BorderRadius.circular(15),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Theme.of(context).colorScheme.secondary,
+                            offset: Offset(1, 1),
+                            blurRadius: 9,
+                            spreadRadius: 1,
+                          ),
+                        ],
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            Column(
+                              children: [
+                                Column(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceAround,
+                                  children: [
+                                    Icon(
+                                      Icons.water_drop_sharp,
+                                      size: 30,
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.surface,
+                                    ),
+                                    Text(
+                                      "${currentValue[0]['humidity']}%",
+                                      style: TextStyle(
+                                        color: Theme.of(
+                                          context,
+                                        ).colorScheme.surface,
+                                        fontFamily: "JetBrainsMono",
+                                      ),
+                                    ),
+                                    Text(
+                                      "Humedad",
+                                      style: TextStyle(
+                                        color: Theme.of(
+                                          context,
+                                        ).colorScheme.surface,
+                                        fontFamily: "JetBrainsMono",
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                            Column(
+                              children: [
+                                Column(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceAround,
+                                  children: [
+                                    Icon(
+                                      Icons.wind_power,
+                                      size: 30,
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.surface,
+                                    ),
+                                    Text(
+                                      "${currentValue[0]['wind_kph']}k/h",
+                                      style: TextStyle(
+                                        color: Theme.of(
+                                          context,
+                                        ).colorScheme.surface,
+                                        fontFamily: "JetBrainsMono",
+                                      ),
+                                    ),
+                                    Text(
+                                      "Viento",
+                                      style: TextStyle(
+                                        color: Theme.of(
+                                          context,
+                                        ).colorScheme.surface,
+                                        fontFamily: "JetBrainsMono",
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                            Column(
+                              children: [
+                                Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(
+                                      Icons.sunny,
+                                      size: 30,
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.surface,
+                                    ),
+                                    Text(
+                                      "${currentValue[0]['humidity']}°C",
+                                      style: TextStyle(
+                                        color: Theme.of(
+                                          context,
+                                        ).colorScheme.surface,
+                                        fontFamily: "JetBrainsMono",
+                                      ),
+                                    ),
+                                    Text(
+                                      "Temp Max",
+                                      style: TextStyle(
+                                        color: Theme.of(
+                                          context,
+                                        ).colorScheme.surface,
+                                        fontFamily: "JetBrainsMono",
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
                             ),
                           ],
                         ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 15),
+                  Container(
+                    width: double.maxFinite,
+                    height: 200,
+                    decoration: BoxDecoration(
+                      border: Border(
+                        top: BorderSide(
+                          color: Theme.of(context).colorScheme.surface,
+                        ),
+                      ),
+                      borderRadius: BorderRadius.vertical(
+                        top: Radius.circular(30),
+                      ),
+                    ),
+                    child: Column(
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 20,
+                            vertical: 20,
+                          ),
                           child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Column(
-                                children: [
-                                  Column(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceAround,
-                                    children: [
-                                      Icon(
-                                        Icons.water_drop_sharp,
-                                        size: 30,
-                                        color: Theme.of(
-                                          context,
-                                        ).colorScheme.surface,
-                                      ),
-                                      Text(
-                                        "${currentValue[0]['humidity']}%",
-                                        style: TextStyle(
-                                          color: Theme.of(
-                                            context,
-                                          ).colorScheme.surface,
-                                          fontFamily: "JetBrainsMono",
-                                        ),
-                                      ),
-                                      Text(
-                                        "Humedad",
-                                        style: TextStyle(
-                                          color: Theme.of(
-                                            context,
-                                          ).colorScheme.surface,
-                                          fontFamily: "JetBrainsMono",
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
+                              Text(
+                                "Today Forecast",
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  color: Theme.of(context).colorScheme.surface,
+                                  fontFamily: "JetBrainsMono",
+                                ),
                               ),
-                              Column(
-                                children: [
-                                  Column(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceAround,
-                                    children: [
-                                      Icon(
-                                        Icons.wind_power,
-                                        size: 30,
-                                        color: Theme.of(
-                                          context,
-                                        ).colorScheme.surface,
-                                      ),
-                                      Text(
-                                        "${currentValue[0]['wind_kph']}k/h",
-                                        style: TextStyle(
-                                          color: Theme.of(
-                                            context,
-                                          ).colorScheme.surface,
-                                          fontFamily: "JetBrainsMono",
-                                        ),
-                                      ),
-                                      Text(
-                                        "Viento",
-                                        style: TextStyle(
-                                          color: Theme.of(
-                                            context,
-                                          ).colorScheme.surface,
-                                          fontFamily: "JetBrainsMono",
-                                        ),
-                                      ),
-                                    ],
+                              GestureDetector(
+                                onTap: () {},
+                                child: Text(
+                                  "Weekly Forecast",
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.surface,
+                                    fontFamily: "JetBrainsMono",
                                   ),
-                                ],
-                              ),
-                              Column(
-                                children: [
-                                  Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Icon(
-                                        Icons.sunny,
-                                        size: 30,
-                                        color: Theme.of(
-                                          context,
-                                        ).colorScheme.surface,
-                                      ),
-                                      Text(
-                                        "${currentValue[0]['humidity']}°C",
-                                        style: TextStyle(
-                                          color: Theme.of(
-                                            context,
-                                          ).colorScheme.surface,
-                                          fontFamily: "JetBrainsMono",
-                                        ),
-                                      ),
-                                      Text(
-                                        "Temp Max",
-                                        style: TextStyle(
-                                          color: Theme.of(
-                                            context,
-                                          ).colorScheme.surface,
-                                          fontFamily: "JetBrainsMono",
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
+                                ),
                               ),
                             ],
                           ),
                         ),
-                      ),
+                        Divider(color: Theme.of(context).colorScheme.secondary),
+                        SizedBox(
+                          height: 20,
+                          child: ListView.builder(
+                            scrollDirection: Axis.horizontal,
+                            itemCount: hourly.length,
+                            itemBuilder: (context, index) {
+                              final hour = hourly[index];
+                              final now = DateTime.now();
+                              final hourTime = DateTime.parse(hour['time']);
+                              final isCourrentHour =
+                                  now.hour == hourTime.hour &&
+                                  now.day == hourTime.day;
+                              return Padding(
+                                padding: EdgeInsets.all(5),
+                                child: Container(
+                                  height: 70,
+                                  padding: EdgeInsets.all(8),
+                                  decoration: BoxDecoration(
+                                    color: isCourrentHour
+                                        ? Colors.orangeAccent
+                                        : Colors.black38,
+                                    borderRadius: BorderRadius.circular(40),
+                                  ),
+                                  child: Column(
+                                    children: [
+                                      Text(
+                                        isCourrentHour
+                                            ? "Now"
+                                            : formateTime(hour['time']),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
           ],
         ],
