@@ -1,5 +1,6 @@
 import 'package:app_clima/provider/theme_provider.dart';
 import 'package:app_clima/services/api_services.dart';
+import 'package:app_clima/view/weekly_forecast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
@@ -14,7 +15,7 @@ class HomeScreen extends ConsumerStatefulWidget {
 class _HomeScreenState extends ConsumerState<HomeScreen> {
   final weatherServices = WeatherApiServices();
   String city = "Hermosillo";
-  String coutry = "";
+  String country = "";
   List<Map<String, dynamic>> currentValue = [];
   List<dynamic> hourly = [];
   List<dynamic> pastWeek = [];
@@ -27,12 +28,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   }
 
   Future<void> getData() async {
-    // 1. Inicia el estado de carga y reconstruye el widget para mostrar el indicador.
     setState(() {
       isLoading = true;
     });
 
-    // Variables locales para almacenar los nuevos datos o el estado de error.
     Map<String, dynamic> newCurrentValue;
     List<dynamic> newHourly;
     List<dynamic> newNext7Days;
@@ -42,7 +41,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     bool success = false;
 
     try {
-      // 2. Realiza las llamadas a la API en paralelo para ser más eficiente.
       final results = await Future.wait([
         weatherServices.getHourlyForecast(city),
         weatherServices.getDaySevenForecast(city),
@@ -51,7 +49,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       final forecast = results[0] as Map<String, dynamic>;
       final past = results[1] as List<dynamic>;
 
-      // 3. Asigna los datos a las variables locales si la llamada fue exitosa.
       newCurrentValue = forecast['current'];
       newHourly = forecast['forecast']?['forecastday']?[0]?['hour'] ?? [];
       newNext7Days = forecast['forecast']?['forecastday'] ?? [];
@@ -60,17 +57,15 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       newCountry = forecast["location"]["country"];
       success = true;
     } catch (e) {
-      // 4. En caso de error, asigna valores por defecto.
       newCurrentValue = {};
       newHourly = [];
       newNext7Days = [];
       newPastWeek = [];
       newCity = city; // Mantenemos el nombre de la ciudad anterior
-      newCountry = coutry; // Mantenemos el país anterior
+      newCountry = country; // Mantenemos el país anterior
       success = false;
     }
 
-    // 5. Si el widget todavía está montado, actualiza el estado una sola vez.
     if (mounted) {
       setState(() {
         currentValue = [newCurrentValue];
@@ -78,7 +73,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         next7Days = newNext7Days;
         pastWeek = newPastWeek;
         city = newCity;
-        coutry = newCountry;
+        country = newCountry;
         isLoading = false;
       });
 
@@ -99,8 +94,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     }
   }
 
-  String formateTime(String timeString) {
-    DateTime time = DateTime.parse(timeString);
+  String formatTime(String timeString) {
+    final DateTime? time = DateTime.tryParse(timeString);
+
+    if (time == null) {
+      return '--';
+    }
     return DateFormat.j().format(time);
   }
 
@@ -204,11 +203,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    "$city${coutry.isNotEmpty ? ", $coutry" : ""}",
+                    "$city${country.isNotEmpty ? ", $country" : ""}",
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
-                      fontSize: 31,
+                      fontSize: 22,
                       color: Theme.of(context).colorScheme.onPrimary,
                       fontWeight: FontWeight.w500,
                       fontFamily: "JetBrains",
@@ -217,26 +216,21 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   Text(
                     "${currentValue[0]['temp_c']}°C",
                     style: TextStyle(
-                      fontSize: 50,
+                      fontSize: 33,
                       color: Theme.of(context).colorScheme.onPrimary,
                       fontWeight: FontWeight.bold,
                       fontFamily: "JetBrainsMono",
                     ),
                   ),
-                  Text(
-                    "${currentValue[0]['condition']['text']}",
-                    style: TextStyle(
-                      fontSize: 30,
-                      color: Theme.of(context).colorScheme.onPrimary,
-                      fontFamily: "JetBrains",
-                    ),
-                  ),
+
                   SizedBox(height: 15),
-                  Image.asset("assets/weather/Sunny.png", height: 200),
+                  Image.network("https:${currentValue[0]['condition']?['icon']}", height: 200,
+                  fit: BoxFit.cover,
+                  ),
                   Padding(
                     padding: EdgeInsets.all(15),
                     child: Container(
-                      height: 100,
+                      height: 110,
                       width: double.maxFinite,
                       decoration: BoxDecoration(
                         color: Theme.of(context).primaryColor,
@@ -262,14 +256,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                       MainAxisAlignment.spaceAround,
                                   children: [
                                     Icon(
-                                      Icons.water_drop_sharp,
+                                     Icons.local_fire_department,
                                       size: 30,
                                       color: Theme.of(
                                         context,
                                       ).colorScheme.surface,
                                     ),
                                     Text(
-                                      "${currentValue[0]['humidity']}%",
+                                      "${currentValue[0]['uv']}",
                                       style: TextStyle(
                                         color: Theme.of(
                                           context,
@@ -278,7 +272,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                       ),
                                     ),
                                     Text(
-                                      "Humedad",
+                                      "UV",
                                       style: TextStyle(
                                         color: Theme.of(
                                           context,
@@ -297,14 +291,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                       MainAxisAlignment.spaceAround,
                                   children: [
                                     Icon(
-                                      Icons.wind_power,
+                                      Icons.water_drop_sharp,
                                       size: 30,
                                       color: Theme.of(
                                         context,
                                       ).colorScheme.surface,
                                     ),
                                     Text(
-                                      "${currentValue[0]['wind_kph']}k/h",
+                                      "${next7Days[0]['day']?['daily_chance_of_rain'] ?? ""}%",
                                       style: TextStyle(
                                         color: Theme.of(
                                           context,
@@ -313,7 +307,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                       ),
                                     ),
                                     Text(
-                                      "Viento",
+                                      "Prob. Lluvia",
                                       style: TextStyle(
                                         color: Theme.of(
                                           context,
@@ -338,7 +332,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                       ).colorScheme.surface,
                                     ),
                                     Text(
-                                      "${currentValue[0]['humidity']}°C",
+                                      "${next7Days[0]['day']?['maxtemp_c'] ?? ""}°C",
                                       style: TextStyle(
                                         color: Theme.of(
                                           context,
@@ -367,7 +361,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   SizedBox(height: 15),
                   Container(
                     width: double.maxFinite,
-                    height: 200,
+                    height: 240,
                     decoration: BoxDecoration(
                       border: Border(
                         top: BorderSide(
@@ -389,19 +383,30 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text(
-                                "Today Forecast",
+                                "Today ",
                                 style: TextStyle(
-                                  fontSize: 18,
+                                  fontSize: 12,
                                   color: Theme.of(context).colorScheme.surface,
                                   fontFamily: "JetBrainsMono",
                                 ),
                               ),
                               GestureDetector(
-                                onTap: () {},
+                                onTap: () {
+                                  Navigator.push(
+                                    (context),
+                                    MaterialPageRoute(
+                                      builder: (context) => WeeklyForecast(
+                                        city: city,
+                                  
+                                        next7Days: next7Days, currentValue: currentValue,
+                                      ),
+                                    ),
+                                  );
+                                },
                                 child: Text(
-                                  "Weekly Forecast",
+                                  "Weekly",
                                   style: TextStyle(
-                                    fontSize: 18,
+                                    fontSize: 12,
                                     color: Theme.of(
                                       context,
                                     ).colorScheme.surface,
@@ -414,7 +419,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         ),
                         Divider(color: Theme.of(context).colorScheme.secondary),
                         SizedBox(
-                          height: 20,
+                          height: 150,
                           child: ListView.builder(
                             scrollDirection: Axis.horizontal,
                             itemCount: hourly.length,
@@ -422,26 +427,59 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                               final hour = hourly[index];
                               final now = DateTime.now();
                               final hourTime = DateTime.parse(hour['time']);
-                              final isCourrentHour =
+                              final isCurrentHour =
                                   now.hour == hourTime.hour &&
                                   now.day == hourTime.day;
                               return Padding(
-                                padding: EdgeInsets.all(5),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 8,
+                                  vertical: 2,
+                                ),
                                 child: Container(
-                                  height: 70,
-                                  padding: EdgeInsets.all(8),
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 8,
+                                  ),
                                   decoration: BoxDecoration(
-                                    color: isCourrentHour
-                                        ? Colors.orangeAccent
+                                    color: isCurrentHour
+                                        ? Colors.yellow
                                         : Colors.black38,
-                                    borderRadius: BorderRadius.circular(40),
+                                    borderRadius: BorderRadius.circular(20),
                                   ),
                                   child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
                                     children: [
                                       Text(
-                                        isCourrentHour
-                                            ? "Now"
-                                            : formateTime(hour['time']),
+                                        isCurrentHour
+                                            ? "Ahora"
+                                            : formatTime(hour['time']),
+                                        style: TextStyle(
+                                          color: Theme.of(
+                                            context,
+                                          ).colorScheme.surface,
+                                          fontFamily: "JetBrainsMono",
+                                          fontSize: 16,
+                                        ),
+                                      ),
+
+                                      const SizedBox(height: 10),
+                                      Image.network(
+                                        "https:${hour['condition']?['icon']}",
+                                        width: 40,
+                                        height: 40,
+                                        fit: BoxFit.cover,
+                                      ),
+                                      const SizedBox(height: 10),
+                                      Text(
+                                        "${hour['temp_c'].toString().substring(0, hour['temp_c'].toString().length - 2)}°C",
+                                        style: TextStyle(
+                                          color: Theme.of(
+                                            context,
+                                          ).colorScheme.surface,
+                                          fontFamily: "JetBrainsMono",
+                                          fontSize: 16,
+                                        ),
                                       ),
                                     ],
                                   ),
