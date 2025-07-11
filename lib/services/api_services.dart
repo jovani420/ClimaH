@@ -7,7 +7,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class WeatherApiServices {
   
-  final apiKey = dotenv.env['KEY'];
+  final apiKey = dotenv.env['apiKey'];
   
   Future<Map<String, dynamic>> getHourlyForecast(String location) async {
     final url = Uri.parse(
